@@ -20,6 +20,8 @@ class IntlPhoneField extends StatefulWidget {
   /// How the text should be aligned horizontally.
   final TextAlign textAlign;
 
+  final TextDirection textDirection;
+
   /// How the text should be aligned vertically.
   final TextAlignVertical? textAlignVertical;
   final VoidCallback? onTap;
@@ -49,7 +51,7 @@ class IntlPhoneField extends StatefulWidget {
   /// By default, the validator checks whether the input number length is between selected country's phone numbers min and max length.
   /// If `disableLengthCheck` is not set to `true`, your validator returned value will be overwritten by the default validator.
   /// But, if `disableLengthCheck` is set to `true`, your validator will have to check phone number length itself.
-  final FutureOr<String?> Function(PhoneNumber?)? validator;
+  final String? Function(PhoneNumber?)? validator;
 
   /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
@@ -296,6 +298,7 @@ class IntlPhoneField extends StatefulWidget {
     this.pickerDialogStyle,
     this.flagsButtonMargin = EdgeInsets.zero,
     this.magnifierConfiguration,
+    this.textDirection = TextDirection.ltr,
   }) : super(key: key);
 
   @override
@@ -348,6 +351,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       if (value is String) {
         validatorMessage = value;
       } else {
+        // ignore: cast_from_null_always_fails
         (value as Future).then((msg) {
           validatorMessage = msg;
         });
@@ -388,6 +392,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       readOnly: widget.readOnly,
       obscureText: widget.obscureText,
       textAlign: widget.textAlign,
+      textDirection: widget.textDirection,
       textAlignVertical: widget.textAlignVertical,
       cursorColor: widget.cursorColor,
       onTap: widget.onTap,
@@ -420,10 +425,6 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
           number: value,
         );
 
-        if (widget.autovalidateMode != AutovalidateMode.disabled) {
-          validatorMessage = await widget.validator?.call(phoneNumber);
-        }
-
         widget.onChanged?.call(phoneNumber);
       },
       validator: (value) {
@@ -434,7 +435,13 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
               : widget.invalidNumberMessage;
         }
 
-        return validatorMessage;
+        final phoneNumber = PhoneNumber(
+          countryISOCode: _selectedCountry.code,
+          countryCode: '+${_selectedCountry.fullCountryCode}',
+          number: value,
+        );
+
+        return widget.validator?.call(phoneNumber) ?? validatorMessage;
       },
       maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,
       keyboardType: widget.keyboardType,
