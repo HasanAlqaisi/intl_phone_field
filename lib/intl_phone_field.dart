@@ -409,7 +409,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         final phoneNumber = PhoneNumber(
           countryISOCode: _selectedCountry.code,
           countryCode: '+${_selectedCountry.fullCountryCode}',
-          number: '',
+          number: value ?? '',
         );
 
         return widget.validator?.call(phoneNumber);
