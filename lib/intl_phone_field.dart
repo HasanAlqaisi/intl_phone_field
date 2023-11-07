@@ -22,6 +22,8 @@ class IntlPhoneField extends StatefulWidget {
 
   final TextDirection textDirection;
 
+  final StrutStyle? strutStyle;
+
   /// How the text should be aligned vertically.
   final TextAlignVertical? textAlignVertical;
   final VoidCallback? onTap;
@@ -268,6 +270,7 @@ class IntlPhoneField extends StatefulWidget {
     this.focusNode,
     this.decoration = const InputDecoration(),
     this.style,
+    this.strutStyle,
     this.dropdownTextStyle,
     this.onSubmitted,
     this.validator,
@@ -392,6 +395,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
       readOnly: widget.readOnly,
       obscureText: widget.obscureText,
       textAlign: widget.textAlign,
+      strutStyle: widget.strutStyle,
       textDirection: widget.textDirection,
       textAlignVertical: widget.textAlignVertical,
       cursorColor: widget.cursorColor,
