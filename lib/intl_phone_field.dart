@@ -205,11 +205,6 @@ class IntlPhoneField extends StatefulWidget {
   /// Default value is `true`.
   final bool showCountryFlag;
 
-  /// Message to be displayed on autoValidate error
-  ///
-  /// Default value is `Invalid Mobile Number`.
-  final String? invalidNumberMessage;
-
   /// The color of the cursor.
   final Color? cursorColor;
 
@@ -292,7 +287,6 @@ class IntlPhoneField extends StatefulWidget {
     this.cursorColor,
     this.disableLengthCheck = false,
     this.flagsButtonPadding = EdgeInsets.zero,
-    this.invalidNumberMessage = 'Invalid Mobile Number',
     this.cursorHeight,
     this.cursorRadius = Radius.zero,
     this.cursorWidth = 2.0,
@@ -338,25 +332,6 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         number = number.replaceFirst(RegExp("^\\+${_selectedCountry.fullCountryCode}"), "");
       } else {
         number = number.replaceFirst(RegExp("^${_selectedCountry.fullCountryCode}"), "");
-      }
-    }
-
-    if (widget.autovalidateMode == AutovalidateMode.always) {
-      final initialPhoneNumber = PhoneNumber(
-        countryISOCode: _selectedCountry.code,
-        countryCode: '+${_selectedCountry.dialCode}',
-        number: widget.initialValue ?? '',
-      );
-
-      final value = widget.validator?.call(initialPhoneNumber);
-
-      if (value is String) {
-        validatorMessage = value;
-      } else {
-        // ignore: cast_from_null_always_fails
-        (value as Future).then((msg) {
-          validatorMessage = msg;
-        });
       }
     }
   }
