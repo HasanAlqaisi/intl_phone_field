@@ -211,6 +211,8 @@ class IntlPhoneField extends StatefulWidget {
   /// Default value is `Invalid Mobile Number`.
   final String? invalidNumberMessage;
 
+  final String? emptyFieldMessage;
+
   /// The color of the cursor.
   final Color? cursorColor;
 
@@ -294,6 +296,7 @@ class IntlPhoneField extends StatefulWidget {
     this.disableLengthCheck = false,
     this.flagsButtonPadding = EdgeInsets.zero,
     this.invalidNumberMessage = 'Invalid Mobile Number',
+    this.emptyFieldMessage = 'Please Enter Phone Number',
     this.cursorHeight,
     this.cursorRadius = Radius.zero,
     this.cursorWidth = 2.0,
@@ -432,7 +435,8 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         widget.onChanged?.call(phoneNumber);
       },
       validator: (value) {
-        if (value == null || !isNumeric(value)) return validatorMessage;
+        if (value == null || value.isEmpty) return widget.emptyFieldMessage;
+        if (!isNumeric(value)) return validatorMessage;
         if (!widget.disableLengthCheck) {
           return value.length >= _selectedCountry.minLength && value.length <= _selectedCountry.maxLength
               ? null
@@ -445,7 +449,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
           number: value,
         );
 
-        return widget.validator?.call(phoneNumber) ?? validatorMessage;
+        return validatorMessage ?? widget.validator?.call(phoneNumber);
       },
       maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,
       keyboardType: widget.keyboardType,
